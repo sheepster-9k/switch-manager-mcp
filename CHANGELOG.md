@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.3
+
+- Add addon icon and logo (toggle switch + MCP branding)
+
 ## 1.3.2
 
 - Fix release workflow awk quoting for changelog extraction
