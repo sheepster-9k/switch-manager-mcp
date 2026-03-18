@@ -27,20 +27,17 @@ jobs:
           fi
 
       - name: Extract changelog for this version
-        id: changelog
         run: |
-          # Extract the section for this version from CHANGELOG.md
           version="${{ steps.version.outputs.version }}"
-          changelog=$(awk "/^## ${version}$/,/^## [0-9]/" CHANGELOG.md | head -n -1 | tail -n +2)
-          # Use delimiter for multiline output
-          echo "body<<CHANGELOG_EOF" >> "$GITHUB_OUTPUT"
-          echo "$changelog" >> "$GITHUB_OUTPUT"
-          echo "CHANGELOG_EOF" >> "$GITHUB_OUTPUT"
+          # Extract section between this version header and the next, drop both headers
+          awk "/^## ${version}/,/^## [0-9]/" CHANGELOG.md | grep -v "^## " > /tmp/release_body.md
+          echo "--- Extracted release notes ---"
+          cat /tmp/release_body.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: "v${{ steps.version.outputs.version }}"
-          body: ${{ steps.changelog.outputs.body }}
+          body_path: /tmp/release_body.md
           draft: false
           prerelease: false

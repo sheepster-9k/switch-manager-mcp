@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+
+- Fix release workflow: use body_path for reliable multiline changelog extraction
+
 ## 1.3.0
 
 - Add AppArmor profile for maximum security rating (score 5 → 6)
