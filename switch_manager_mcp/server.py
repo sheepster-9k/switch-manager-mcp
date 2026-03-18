@@ -115,26 +115,21 @@ async def api_status(request: Request) -> JSONResponse:
 # Application assembly
 # ---------------------------------------------------------------------------
 
+_extra_routes = [
+    Route("/", dashboard),
+    Route("/api/status", api_status),
+]
 
-def create_app():
-    """Build the app by adding routes and middleware to FastMCP's http_app.
+_middleware = [Middleware(BearerAuthMiddleware)]
 
-    This preserves FastMCP's lifespan (which initialises the Streamable HTTP
-    task group) while adding our dashboard and auth layer.
-    """
-    app = mcp.http_app()
+app = mcp.http_app(
+    path="/mcp",
+    middleware=_middleware,
+)
 
-    # Prepend custom routes so they match before the MCP catch-all.
-    app.routes.insert(0, Route("/", dashboard))
-    app.routes.insert(1, Route("/api/status", api_status))
-
-    # Add auth middleware.
-    app.add_middleware(BearerAuthMiddleware)
-
-    return app
-
-
-app = create_app()
+# Prepend dashboard/status routes before the MCP endpoint.
+for i, route in enumerate(_extra_routes):
+    app.routes.insert(i, route)
 
 if __name__ == "__main__":
     logger.info(

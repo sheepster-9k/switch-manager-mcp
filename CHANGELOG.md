@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0
+
+- Upgrade to FastMCP 2.14+ with native `http_app(middleware=...)` support
+- Properly initialised Streamable HTTP lifespan (fixes task group error)
+- Remove pydantic version pin (resolved by FastMCP 2.14+)
+
 ## 1.1.0
 
 - Migrate from deprecated SSE transport to Streamable HTTP (`http_app()`)
