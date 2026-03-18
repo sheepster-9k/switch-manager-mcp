@@ -1,4 +1,4 @@
-"""Main entry point: FastMCP server with SSE transport, auth middleware, and status dashboard."""
+"""Main entry point: FastMCP server with Streamable HTTP, auth middleware, and status dashboard."""
 
 from __future__ import annotations
 
@@ -8,12 +8,11 @@ import logging
 import sys
 
 import uvicorn
-from starlette.applications import Starlette
 from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse, Response
-from starlette.routing import Mount, Route
+from starlette.routing import Route
 
 from config import config
 
@@ -88,7 +87,7 @@ _DASHBOARD_HTML = """\
   <p class="ok">Status: running</p>
   <p>Home Assistant: <code>{ha_url}</code></p>
   <p>Auth required: <code>{auth_enabled}</code></p>
-  <p class="muted">Connect an MCP client to this server's SSE endpoint.</p>
+  <p class="muted">Connect an MCP client to <code>/mcp</code> (Streamable HTTP).</p>
 </body>
 </html>
 """
@@ -117,20 +116,21 @@ async def api_status(request: Request) -> JSONResponse:
 # ---------------------------------------------------------------------------
 
 
-def create_app() -> Starlette:
-    """Build the Starlette app with MCP mounted at root."""
-    mcp_app = mcp.http_app()
+def create_app():
+    """Build the app by adding routes and middleware to FastMCP's http_app.
 
-    routes = [
-        Route("/", dashboard),
-        Route("/api/status", api_status),
-        Mount("/", app=mcp_app),
-    ]
+    This preserves FastMCP's lifespan (which initialises the Streamable HTTP
+    task group) while adding our dashboard and auth layer.
+    """
+    app = mcp.http_app()
 
-    app = Starlette(
-        routes=routes,
-        middleware=[Middleware(BearerAuthMiddleware)],
-    )
+    # Prepend custom routes so they match before the MCP catch-all.
+    app.routes.insert(0, Route("/", dashboard))
+    app.routes.insert(1, Route("/api/status", api_status))
+
+    # Add auth middleware.
+    app.add_middleware(BearerAuthMiddleware)
+
     return app
 
 
