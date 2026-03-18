@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.2
+
+- Fix release workflow awk quoting for changelog extraction
+
 ## 1.3.1
 
 - Fix release workflow: use body_path for reliable multiline changelog extraction

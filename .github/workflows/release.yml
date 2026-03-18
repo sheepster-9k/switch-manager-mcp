@@ -30,7 +30,7 @@ jobs:
         run: |
           version="${{ steps.version.outputs.version }}"
           # Extract section between this version header and the next, drop both headers
-          awk "/^## ${version}/,/^## [0-9]/" CHANGELOG.md | grep -v "^## " > /tmp/release_body.md
+          awk -v ver="$version" '$0 ~ "^## "ver {found=1; next} /^## [0-9]/ {if(found) exit} found' CHANGELOG.md > /tmp/release_body.md
           echo "--- Extracted release notes ---"
           cat /tmp/release_body.md
 
