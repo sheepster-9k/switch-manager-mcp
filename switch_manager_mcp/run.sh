@@ -9,4 +9,4 @@ export HA_URL="http://supervisor/core"
 export HA_TOKEN="${SUPERVISOR_TOKEN}"
 export SERVER_HOST="0.0.0.0"
 
-exec python3 /app/server.py
+exec /opt/venv/bin/python3 /app/server.py

@@ -1,5 +1,5 @@
-fastmcp==2.5.1
-httpx==0.28.1
-starlette==0.45.3
-uvicorn==0.34.0
-websockets==15.0.1
+fastmcp>=2.5.1
+httpx>=0.28
+starlette>=0.45
+uvicorn>=0.34
+websockets>=15.0
