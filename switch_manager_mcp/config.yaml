@@ -1,6 +1,6 @@
 name: Switch Manager MCP
 description: MCP server for AI-assisted management of Switch Manager button configurations
-version: "1.2.0"
+version: "1.3.0"
 slug: switch_manager_mcp
 arch:
   - aarch64
@@ -16,7 +16,7 @@ homeassistant_api: true
 ports:
   8890/tcp: 8890
 ports_description:
-  8890/tcp: Switch Manager MCP SSE endpoint
+  8890/tcp: Switch Manager MCP Streamable HTTP endpoint
 options:
   port: 8890
   mcp_auth_token: ""

@@ -1,0 +1,42 @@
+#include <tunables/global>
+
+profile switch_manager_mcp flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Receive signals from S6 service manager
+  signal (receive) peer=*,
+
+  # Network access (MCP HTTP endpoint + HA WebSocket)
+  network inet  stream,
+  network inet6 stream,
+  network inet  dgram,
+  network inet6 dgram,
+
+  # Read access to app files
+  /app/** r,
+
+  # Python venv execution
+  /opt/venv/** rix,
+
+  # Python runtime
+  /usr/bin/python3* rix,
+  /usr/lib/python3*/** r,
+
+  # Temp and proc access
+  /tmp/** rw,
+  /proc/*/fd/ r,
+  /dev/null rw,
+  /dev/urandom r,
+
+  # Bashio / S6 entrypoint
+  /run.sh rix,
+  /usr/bin/bashio rix,
+  /usr/lib/bashio/** r,
+  /bin/** rix,
+  /usr/bin/** rix,
+
+  # HA addon config
+  /data/** r,
+
+  # Deny everything else by default
+}

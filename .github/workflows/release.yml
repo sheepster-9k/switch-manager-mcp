@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Verify config.yaml version matches tag
+        run: |
+          config_version=$(grep '^version:' switch_manager_mcp/config.yaml | sed 's/version: *"\(.*\)"/\1/')
+          if [ "$config_version" != "${{ steps.version.outputs.version }}" ]; then
+            echo "::error::config.yaml version ($config_version) does not match tag (${{ steps.version.outputs.version }})"
+            exit 1
+          fi
+
+      - name: Extract changelog for this version
+        id: changelog
+        run: |
+          # Extract the section for this version from CHANGELOG.md
+          version="${{ steps.version.outputs.version }}"
+          changelog=$(awk "/^## ${version}$/,/^## [0-9]/" CHANGELOG.md | head -n -1 | tail -n +2)
+          # Use delimiter for multiline output
+          echo "body<<CHANGELOG_EOF" >> "$GITHUB_OUTPUT"
+          echo "$changelog" >> "$GITHUB_OUTPUT"
+          echo "CHANGELOG_EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "v${{ steps.version.outputs.version }}"
+          body: ${{ steps.changelog.outputs.body }}
+          draft: false
+          prerelease: false

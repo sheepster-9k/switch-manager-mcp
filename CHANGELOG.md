@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0
+
+- Add AppArmor profile for maximum security rating (score 5 → 6)
+- Add GitHub Actions release workflow with automated changelog extraction
+- Fix ports_description (SSE → Streamable HTTP)
+
 ## 1.2.0
 
 - Upgrade to FastMCP 2.14+ with native `http_app(middleware=...)` support
