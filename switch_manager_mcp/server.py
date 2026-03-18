@@ -119,7 +119,7 @@ async def api_status(request: Request) -> JSONResponse:
 
 def create_app() -> Starlette:
     """Build the Starlette app with MCP mounted at root."""
-    mcp_app = mcp.sse_app()
+    mcp_app = mcp.http_app()
 
     routes = [
         Route("/", dashboard),

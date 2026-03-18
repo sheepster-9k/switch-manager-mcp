@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+- Migrate from deprecated SSE transport to Streamable HTTP (`http_app()`)
+- Use Python venv in Docker to isolate from system packages
+- Pin pydantic<2.10 for fastmcp 2.5.1 compatibility
+
 ## 1.0.0
 
 - Initial release
